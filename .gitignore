@@ -1,0 +1,116 @@
+# Specification and development artifacts
+.specify/memory/*.tmp
+.specify/cache/
+history/**/*.draft.md
+
+# Environment variables - CRITICAL: Never commit these!
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env*.local
+*.env
+!.env.example
+
+# Python virtual environments
+venv/
+env/
+ENV/
+.venv/
+backend/venv/
+*/venv/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+pip-log.txt
+pip-delete-this-directory.txt
+.pytest_cache/
+.coverage
+htmlcov/
+*.egg-info/
+dist/
+build/
+*.egg
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnpm-store/
+package-lock.json.lock
+.npm
+
+# Build outputs
+dist/
+build/
+out/
+.docusaurus/
+.cache-loader/
+frontend/.docusaurus/
+robotic/.docusaurus/
+*.tsbuildinfo
+
+# IDE and OS files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Logs
+*.log
+logs/
+*.log.*
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+*.bak
+*.backup
+
+# Database files
+*.db
+*.sqlite3
+*.sql
+db/*.db
+db/*.sqlite3
+
+# Redis dump
+dump.rdb
+
+# Coverage reports
+.coverage
+coverage/
+*.cover
+.hypothesis/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Testing
+.tox/
+.pytest_cache/
+
+# Railway
+.railway/
+
+# Vercel
+.vercel

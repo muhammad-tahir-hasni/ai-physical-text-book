@@ -1,0 +1,355 @@
+/**
+ * Authentication UI Styles
+ *
+ * Styles for:
+ * - AuthModal (login/signup)
+ * - BackgroundQuestionnaire
+ * - Profile page
+ * - Form validation feedback
+ * - Password strength indicator
+ */
+
+/* ========== Auth Modal ========== */
+
+.auth-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  padding: 1rem;
+}
+
+.auth-modal-content {
+  background-color: var(--ifm-background-color);
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  max-width: 500px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  padding: 2.5rem;
+  margin: auto;
+}
+
+.auth-modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  font-size: 2rem;
+  color: var(--ifm-color-content-secondary);
+  cursor: pointer;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s;
+}
+
+.auth-modal-close:hover {
+  color: var(--ifm-color-primary);
+}
+
+/* ========== Auth Tabs ========== */
+
+.auth-modal-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+  margin-top: 1rem;
+  border-bottom: 2px solid var(--ifm-color-emphasis-200);
+}
+
+.auth-tab {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--ifm-color-content-secondary);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.auth-tab:hover {
+  color: var(--ifm-color-primary);
+}
+
+.auth-tab.active {
+  color: var(--ifm-color-primary);
+  border-bottom-color: var(--ifm-color-primary);
+}
+
+/* ========== Auth Form ========== */
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.auth-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.auth-form-group label {
+  font-weight: 600;
+  color: var(--ifm-color-content);
+  font-size: 0.9rem;
+}
+
+.auth-form-group input,
+.auth-form-group textarea,
+.auth-form-group select {
+  padding: 0.75rem;
+  border: 2px solid var(--ifm-color-emphasis-300);
+  border-radius: 8px;
+  font-size: 1rem;
+  background-color: var(--ifm-background-surface-color);
+  color: var(--ifm-color-content);
+  transition: border-color 0.2s;
+}
+
+.auth-form-group input:focus,
+.auth-form-group textarea:focus,
+.auth-form-group select:focus {
+  outline: none;
+  border-color: var(--ifm-color-primary);
+}
+
+/* ========== Password Strength Indicator ========== */
+
+.password-strength {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.password-strength-bar {
+  height: 4px;
+  border-radius: 2px;
+  transition: all 0.3s;
+  min-width: 20px;
+}
+
+.password-strength span {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+/* ========== Error Message ========== */
+
+.auth-error {
+  padding: 0.75rem;
+  background-color: #fee;
+  border: 1px solid #fcc;
+  border-radius: 6px;
+  color: #c33;
+  font-size: 0.9rem;
+  margin: -0.5rem 0 0.5rem 0;
+}
+
+/* ========== Submit Button ========== */
+
+.auth-submit {
+  padding: 0.875rem 1.5rem;
+  background-color: var(--ifm-color-primary);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 0.5rem;
+}
+
+.auth-submit:hover:not(:disabled) {
+  background-color: var(--ifm-color-primary-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.auth-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.auth-requirements {
+  font-size: 0.85rem;
+  color: var(--ifm-color-content-secondary);
+  margin: -0.5rem 0 0 0;
+  text-align: center;
+}
+
+/* ========== Questionnaire ========== */
+
+.questionnaire-container {
+  padding: 1rem 0;
+}
+
+.questionnaire-container h2 {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+}
+
+.questionnaire-subtitle {
+  color: var(--ifm-color-content-secondary);
+  margin-bottom: 2rem;
+}
+
+.questionnaire-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.question-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.question-group label {
+  font-weight: 600;
+  color: var(--ifm-color-content);
+  font-size: 0.95rem;
+}
+
+.char-count {
+  font-size: 0.8rem;
+  color: var(--ifm-color-content-secondary);
+  text-align: right;
+}
+
+.questionnaire-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.questionnaire-skip,
+.questionnaire-submit {
+  flex: 1;
+  padding: 0.875rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.questionnaire-skip {
+  background-color: var(--ifm-color-emphasis-200);
+  color: var(--ifm-color-content);
+}
+
+.questionnaire-skip:hover:not(:disabled) {
+  background-color: var(--ifm-color-emphasis-300);
+}
+
+.questionnaire-submit {
+  background-color: var(--ifm-color-primary);
+  color: white;
+}
+
+.questionnaire-submit:hover:not(:disabled) {
+  background-color: var(--ifm-color-primary-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.questionnaire-skip:disabled,
+.questionnaire-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ========== Profile Page ========== */
+
+.profile-card {
+  background-color: var(--ifm-card-background-color);
+  border: 1px solid var(--ifm-color-emphasis-200);
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.profile-card h2 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  font-size: 1.3rem;
+}
+
+.profile-field {
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--ifm-color-emphasis-100);
+}
+
+.profile-field:last-child {
+  border-bottom: none;
+}
+
+.profile-field strong {
+  display: inline-block;
+  min-width: 180px;
+  color: var(--ifm-color-content-secondary);
+}
+
+.profile-edit-button {
+  padding: 0.5rem 1rem;
+  background-color: var(--ifm-color-primary);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.profile-edit-button:hover {
+  background-color: var(--ifm-color-primary-dark);
+}
+
+.profile-edit-form {
+  margin-top: 1.5rem;
+}
+
+.profile-display {
+  margin-top: 1rem;
+}
+
+/* ========== Responsive Design ========== */
+
+@media (max-width: 640px) {
+  .auth-modal-content {
+    padding: 1.5rem;
+    margin: 1rem;
+  }
+
+  .questionnaire-actions {
+    flex-direction: column;
+  }
+
+  .profile-field strong {
+    display: block;
+    margin-bottom: 0.25rem;
+  }
+}

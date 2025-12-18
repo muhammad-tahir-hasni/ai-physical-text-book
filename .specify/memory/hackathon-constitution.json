@@ -1,0 +1,637 @@
+{
+  "constitution_metadata": {
+    "project": "Physical AI & Humanoid Robotics Hackathon",
+    "version": "1.0.0",
+    "created": "2025-12-07",
+    "scope": "High-level governance for hackathon modules, infrastructure, and integrations",
+    "aligned_with": ".specify/memory/constitution.md (academic book constitution)",
+    "purpose": "Define reusable, clear rules for hackathon participants covering modules, RAG chatbot, agents, diagrams, authentication, and security"
+  },
+
+  "core_principles": {
+    "principle_1": {
+      "title": "Modular Architecture & Clear Boundaries",
+      "description": "All hackathon modules (ROS 2, Digital Twin, Isaac, VLA, Capstone) must maintain clear interfaces and minimal coupling. Each module operates independently but integrates seamlessly through standardized ROS 2 message contracts.",
+      "rationale": "Enables parallel development by hackathon teams, reduces integration conflicts, and allows modules to be tested independently before system-level integration."
+    },
+    "principle_2": {
+      "title": "Hardware-Software Co-Design",
+      "description": "All development must consider both simulation environments (Digital Twin Workstation with RTX GPU) and edge deployment (Jetson Orin kits). Solutions must degrade gracefully from cloud to edge without breaking core functionality.",
+      "rationale": "Ensures hackathon projects work across diverse hardware setups (proxy robots, miniature humanoids, premium bipedal platforms) and prepares students for real-world resource constraints."
+    },
+    "principle_3": {
+      "title": "AI-Augmented Development with Human Oversight",
+      "description": "RAG chatbots, subagents, and LLM-based tools assist development but require human validation for critical decisions (architecture, safety-critical code, hardware commands). AI-generated code must be reviewed and tested before deployment.",
+      "rationale": "Balances development speed with safety. Prevents autonomous systems from executing potentially harmful commands on physical robots without human confirmation."
+    },
+    "principle_4": {
+      "title": "Security-First API & Authentication",
+      "description": "All API keys (Claude, Qdrant, Cohere, Gemini, OpenAI) must be stored in `.env` files (never committed to git). User authentication (signup/login) must use industry-standard practices (OAuth 2.0, JWT tokens, bcrypt password hashing). No hardcoded credentials.",
+      "rationale": "Protects hackathon infrastructure from unauthorized access, prevents API quota abuse, and ensures participant data privacy compliance."
+    },
+    "principle_5": {
+      "title": "Documentation-as-Code with Visual Accessibility",
+      "description": "All diagrams must have textual descriptions generated via Gemini or manual annotation. Docusaurus documentation must meet WCAG 2.1 AA accessibility standards. Code examples must be runnable and version-pinned.",
+      "rationale": "Ensures hackathon materials are accessible to participants with disabilities, enables AI-powered documentation search, and guarantees reproducibility across development environments."
+    },
+    "principle_6": {
+      "title": "Simulation-First, Hardware-Validated",
+      "description": "All algorithms must pass validation in simulation (Gazebo, Isaac Sim, Unity) before deployment to physical hardware. Simulation test suites must include failure scenarios (sensor noise, actuator limits, collision recovery).",
+      "rationale": "Reduces hardware damage risk during hackathon, accelerates iteration cycles, and ensures robust algorithm design before expensive physical testing."
+    }
+  },
+
+  "module_1_ros2_nervous_system": {
+    "title": "The Robotic Nervous System (ROS 2)",
+    "learning_objectives": [
+      "Understand ROS 2 graph architecture: nodes, topics, services, actions",
+      "Implement sensor-to-actuator pipelines using publish-subscribe patterns",
+      "Define humanoid robot structure using URDF with joints, links, and kinematic chains",
+      "Integrate Python control logic with ROS 2 using rclpy"
+    ],
+    "technical_rules": [
+      "All ROS 2 nodes must use namespaces to prevent topic collisions in multi-robot scenarios",
+      "Topic names must follow ROS 2 naming conventions: lowercase, underscores, semantic naming (e.g., `/humanoid/imu/data`, `/left_leg/joint_states`)",
+      "Services must be idempotent where possible; non-idempotent actions must document side effects",
+      "URDF files must validate against xacro syntax checker before loading into simulation",
+      "All sensor data must include timestamps and frame_id for tf2 coordinate transformation",
+      "Python nodes must implement graceful shutdown handlers (rclpy.shutdown()) to prevent resource leaks"
+    ],
+    "integration_requirements": [
+      "ROS 2 Humble distribution (LTS) for compatibility with Jetson Orin edge kits",
+      "All packages must build successfully with `colcon build` and pass `colcon test`",
+      "Launch files must use YAML parameter files for configurability across hardware setups",
+      "ROS 2 bag recording must be enabled for debugging and performance analysis"
+    ],
+    "validation_criteria": [
+      "Participants can trace data flow from IMU sensor through ROS 2 topic to balance controller",
+      "URDF loads in RViz2 without errors and displays correct kinematic structure",
+      "Node graph (ros2 node list, ros2 topic list) matches architecture diagrams",
+      "Latency from sensor publish to actuator command: <50ms for real-time control"
+    ]
+  },
+
+  "module_2_digital_twin": {
+    "title": "The Digital Twin (Gazebo & Unity)",
+    "learning_objectives": [
+      "Simulate physics-accurate robot behavior in Gazebo (gravity, collisions, friction)",
+      "Render high-fidelity environments in Unity for visual validation",
+      "Generate synthetic sensor data (LiDAR, depth cameras, IMU) matching real hardware specs",
+      "Validate control algorithms in simulation before hardware deployment"
+    ],
+    "technical_rules": [
+      "Gazebo worlds must define gravity (9.81 m/s²), ground friction coefficients, and collision properties matching target deployment environment",
+      "All simulated sensors must inject realistic noise models (Gaussian for IMU, ray-drop for LiDAR)",
+      "Unity rendering must run at minimum 30 FPS on RTX-enabled Digital Twin Workstation",
+      "URDF-to-Gazebo conversions must preserve mass, inertia, and collision mesh accuracy",
+      "Simulation time must be logged and synchronized with ROS 2 clock for reproducible testing",
+      "Contact forces and torques must be monitored to detect simulation instabilities"
+    ],
+    "integration_requirements": [
+      "Gazebo Fortress or newer for ROS 2 Humble integration",
+      "Unity ML-Agents toolkit for AI training scenarios (optional but recommended)",
+      "ROS 2-Gazebo bridge (ros_gz_bridge) for topic/service communication",
+      "URDF files must be compatible with both Gazebo SDF and Unity URDF Importer"
+    ],
+    "validation_criteria": [
+      "Humanoid robot maintains balance in Gazebo under simulated gravity and ground contact",
+      "Simulated LiDAR point clouds match real sensor specifications (range, resolution, FoV)",
+      "Collision detection prevents inter-penetration of robot links during motion",
+      "Simulation-to-real transfer: control policies work on hardware with <20% performance degradation"
+    ]
+  },
+
+  "module_3_nvidia_isaac_ai_brain": {
+    "title": "The AI-Robot Brain (NVIDIA Isaac)",
+    "learning_objectives": [
+      "Deploy photorealistic simulation environments in Isaac Sim for synthetic data generation",
+      "Implement hardware-accelerated VSLAM (Visual SLAM) using Isaac ROS",
+      "Plan collision-free bipedal navigation paths with Nav2",
+      "Optimize perception and AI workloads for edge deployment on Jetson Orin"
+    ],
+    "technical_rules": [
+      "Isaac Sim environments must use RTX ray tracing for photorealistic rendering when generating training datasets",
+      "VSLAM must handle loop closure and relocalization for long-duration autonomous missions",
+      "Nav2 global planners must respect bipedal kinematic constraints (step length, foot clearance, center of mass stability)",
+      "Local planners must generate trajectories at minimum 10 Hz for reactive obstacle avoidance",
+      "All Isaac ROS nodes must report GPU memory usage and processing latency",
+      "Edge deployment must prioritize INT8 quantization for neural networks to meet Jetson Orin power budget"
+    ],
+    "integration_requirements": [
+      "NVIDIA Isaac Sim 2023.1.0+ with Omniverse support",
+      "Isaac ROS GEMs (hardware-accelerated perception nodes) for VSLAM, depth processing",
+      "Nav2 configuration files tuned for bipedal humanoid footprint and dynamics",
+      "TensorRT optimization for perception models deployed to Jetson Orin"
+    ],
+    "validation_criteria": [
+      "VSLAM constructs accurate 3D map of test environment with <5cm positional error",
+      "Nav2 generates collision-free paths in cluttered environments within 2 seconds",
+      "Isaac Sim synthetic datasets achieve >85% sim-to-real transfer accuracy on object detection",
+      "Jetson Orin executes full perception + navigation pipeline at >5 FPS"
+    ]
+  },
+
+  "module_4_vision_language_action": {
+    "title": "Vision-Language-Action (VLA) Pipeline",
+    "learning_objectives": [
+      "Translate natural language voice commands into ROS 2 action sequences using LLMs",
+      "Integrate OpenAI Whisper for robust voice-to-text transcription",
+      "Implement multi-modal planning combining vision, speech, and gesture inputs",
+      "Execute end-to-end autonomous tasks: navigate, perceive, manipulate"
+    ],
+    "technical_rules": [
+      "Whisper transcription must run locally on Jetson Orin (no cloud dependency) using TensorRT optimized models",
+      "LLM prompts must include robot state context (current location, visible objects, battery level) for grounded planning",
+      "Action decomposition must validate physical feasibility (joint limits, reachability, collision-free paths) before execution",
+      "Multi-step tasks must implement failure recovery (e.g., if object not found, ask for clarification)",
+      "Voice commands must be confirmed before executing safety-critical actions (e.g., 'climb stairs', 'open door')",
+      "VLA pipeline must log all intermediate steps (transcription → plan → actions → execution) for debugging"
+    ],
+    "integration_requirements": [
+      "OpenAI Whisper (small or base model) optimized for edge deployment",
+      "LLM API access (Claude, GPT-4, or local LLaMA) with fallback if network unavailable",
+      "ROS 2 action servers for navigation, perception, manipulation primitives",
+      "Multi-modal sensor fusion: RGB-D cameras, microphone array, IMU"
+    ],
+    "validation_criteria": [
+      "Voice command 'bring me the red box' executes full pipeline: transcribe → plan → navigate → detect → grasp → return",
+      "Whisper achieves >90% transcription accuracy in lab environment with moderate background noise",
+      "LLM generates executable ROS 2 action sequences with >80% success rate for common household tasks",
+      "Failure recovery: system prompts user for clarification when task is ambiguous or infeasible"
+    ]
+  },
+
+  "capstone_autonomous_humanoid": {
+    "title": "Capstone Project: Fully Autonomous Humanoid Robot",
+    "description": "Integration of all modules (ROS 2, Digital Twin, Isaac, VLA) into a complete autonomous system capable of executing complex multi-step tasks from natural language commands.",
+    "project_requirements": [
+      "System must operate autonomously for minimum 5 minutes without human intervention",
+      "Must demonstrate at least 3 distinct capabilities: navigation, perception, manipulation",
+      "Voice command interface must handle at least 10 different task types",
+      "Must handle failure scenarios gracefully (object not found, path blocked, low battery)"
+    ],
+    "technical_rules": [
+      "All subsystems (ROS 2, Isaac navigation, VLA) must be integrated via standardized ROS 2 interfaces",
+      "System architecture must use layered approach: reactive layer (collision avoidance) → deliberative layer (task planning) → reflective layer (learning from failures)",
+      "Hardware deployment must include safety measures: emergency stop, collision detection, joint torque limits",
+      "Simulation validation required before physical deployment: 100% of planned tasks must succeed in Isaac Sim",
+      "Real-time monitoring dashboard must display: robot state, active task, sensor data, system health"
+    ],
+    "evaluation_criteria": [
+      "Task completion rate: >70% for predefined test scenarios",
+      "Safety: zero collisions causing hardware damage during testing",
+      "Latency: voice command to action initiation <3 seconds",
+      "Robustness: system recovers from at least 2 common failure modes without restart"
+    ],
+    "hardware_options": [
+      "Proxy Robot Lab: Remote access to shared humanoid platform (recommended for distributed teams)",
+      "Miniature Humanoid Kit: Desktop-scale robot (affordable, limited manipulation)",
+      "Premium Bipedal Platform: Full-scale humanoid (requires dedicated lab space and supervision)"
+    ]
+  },
+
+  "rag_chatbot_integration": {
+    "title": "RAG-Powered Documentation Assistant",
+    "purpose": "Provide context-aware answers to participant questions using retrieval-augmented generation over course materials, ROS 2 docs, and Isaac Sim documentation.",
+    "technical_rules": [
+      "Embeddings must be generated using Cohere API and stored in Qdrant vector database",
+      "Retrieval must search across: course modules, bibliography sources, code examples, troubleshooting guides",
+      "Chatbot responses must cite sources with document references (e.g., 'See Module 2: Gazebo Physics, section 2.3')",
+      "RAG context window: maximum 4000 tokens to prevent hallucination in long conversations",
+      "Fallback to web search if no relevant documents found in vector database",
+      "Rate limiting: maximum 10 queries per user per minute to prevent API quota exhaustion"
+    ],
+    "integration_requirements": [
+      "Qdrant cloud instance (URL and API key from .env)",
+      "Cohere embeddings API (multilingual model recommended for international participants)",
+      "Claude API for generation (primary) with GPT-4 fallback",
+      "Frontend integration via REST API or WebSocket for real-time chat"
+    ],
+    "data_sources": [
+      "All Docusaurus markdown files from robotic/docs/ directory",
+      "Bibliography references from robotic/bibliography/",
+      "ROS 2 official documentation (indexed and embedded)",
+      "NVIDIA Isaac Sim documentation (indexed and embedded)",
+      "Common error messages and troubleshooting solutions"
+    ],
+    "validation_criteria": [
+      "Response accuracy: >85% for factual questions about course content",
+      "Source citation: 100% of answers include document references",
+      "Latency: <3 seconds from query to response (including retrieval + generation)",
+      "Handles ambiguous questions by asking clarifying follow-ups"
+    ]
+  },
+
+  "subagents_and_skills": {
+    "title": "AI Subagents & Specialized Skills",
+    "purpose": "Decompose complex hackathon tasks into specialized AI agents (code generation, debugging, architecture planning, diagram creation) that collaborate to accelerate development.",
+    "agent_roles": {
+      "code_generator": {
+        "responsibility": "Generate ROS 2 nodes, URDF files, launch files, Python controllers",
+        "tools": ["Read existing codebase", "Write new files", "Edit existing files", "Run syntax validation"],
+        "guardrails": "Must validate generated code against ROS 2 best practices; never overwrite files without confirmation"
+      },
+      "debugger": {
+        "responsibility": "Analyze runtime errors, ROS 2 log files, simulation crashes, sensor data anomalies",
+        "tools": ["Read log files", "Grep for error patterns", "Suggest fixes", "Run diagnostic commands"],
+        "guardrails": "Must explain root cause before suggesting fixes; avoid trial-and-error changes"
+      },
+      "architect": {
+        "responsibility": "Design system architecture, plan module integration, create ADRs for significant decisions",
+        "tools": ["Read specs", "Create architecture diagrams (textual descriptions)", "Write ADRs", "Validate against constitution"],
+        "guardrails": "Must present multiple options with trade-offs; require human decision for architectural choices"
+      },
+      "diagram_generator": {
+        "responsibility": "Create textual descriptions of system diagrams, data flow diagrams, architecture diagrams for Gemini rendering",
+        "tools": ["WebFetch Gemini API", "Write diagram descriptions", "Validate accessibility compliance"],
+        "guardrails": "All diagrams must include textual descriptions for screen readers; no critical information in visuals only"
+      }
+    },
+    "collaboration_rules": [
+      "Subagents must communicate via shared task list (TodoWrite) to avoid duplicate work",
+      "Each agent logs actions to Prompt History Records (PHR) for traceability",
+      "Human oversight required for: deleting files, modifying hardware configs, changing network settings",
+      "Agents must check constitution compliance before executing tasks that introduce new dependencies or complexity"
+    ],
+    "skill_definitions": [
+      "ros2_node_creation: Generate complete ROS 2 node with pub/sub, validation, and tests",
+      "urdf_modeling: Create robot description files with correct kinematics and collision meshes",
+      "gazebo_world_setup: Generate simulation environments with physics, lighting, and spawn configurations",
+      "nav2_configuration: Tune navigation parameters for specific robot footprints and environments",
+      "vla_pipeline_integration: Connect Whisper → LLM → ROS 2 actions with error handling"
+    ]
+  },
+
+  "gemini_diagram_generation": {
+    "title": "Gemini-Powered Visual Diagram Generation",
+    "purpose": "Automatically generate architecture diagrams, flowcharts, and system visualizations from textual descriptions using Gemini API, ensuring accessibility and version control compatibility.",
+    "technical_rules": [
+      "All diagrams start as textual descriptions in Markdown format (e.g., 'Node A publishes to Topic X, which Node B subscribes to')",
+      "Gemini API must receive structured prompts: diagram type (flowchart, architecture, sequence), entities, relationships, styling preferences",
+      "Generated diagrams must be exported as SVG (vector format) for scalability and version control",
+      "Each diagram must include alt-text description matching the original textual input for accessibility",
+      "Diagrams stored in robotic/static/diagrams/ with naming convention: <module>-<diagram-type>-<description>.svg",
+      "Version control: commit both SVG and source textual description to enable regeneration if styling changes"
+    ],
+    "integration_requirements": [
+      "Gemini API key from .env (GEMINI_API_KEY)",
+      "Prompt template library for common diagram types (ROS 2 graph, URDF tree, VLA pipeline)",
+      "Automated alt-text generation from textual descriptions",
+      "CI/CD validation: ensure all diagrams have corresponding textual descriptions"
+    ],
+    "diagram_types": [
+      "ROS 2 computation graphs (nodes, topics, services)",
+      "URDF kinematic trees (joints, links, parent-child relationships)",
+      "Sensor-to-actuator data flow pipelines",
+      "Simulation environment layouts (Gazebo worlds, Isaac Sim scenes)",
+      "VLA pipeline architecture (voice → LLM → actions → feedback)",
+      "System architecture diagrams (edge devices, cloud services, communication protocols)"
+    ],
+    "validation_criteria": [
+      "Generated SVG renders correctly in Docusaurus and PDF exports",
+      "Alt-text descriptions match WCAG 2.1 AA accessibility standards",
+      "Diagram generation latency: <10 seconds per diagram",
+      "Visual accuracy: matches textual description with >95% correctness (manual review required)"
+    ]
+  },
+
+  "authentication_system": {
+    "title": "User Authentication (Signup/Login)",
+    "purpose": "Secure access control for hackathon platform (RAG chatbot, progress tracking, hardware lab reservations) using industry-standard authentication practices.",
+    "technical_rules": [
+      "Password storage: bcrypt hashing with minimum 12 rounds (cost factor)",
+      "Session management: JWT tokens with 1-hour expiration, refresh tokens with 7-day expiration",
+      "OAuth 2.0 integration for third-party login (GitHub, Google) to reduce password management burden",
+      "Multi-factor authentication (MFA) optional but recommended for hardware lab access",
+      "Rate limiting: maximum 5 failed login attempts per IP per 15 minutes to prevent brute force",
+      "HTTPS required for all authentication endpoints (no plaintext credentials over HTTP)"
+    ],
+    "user_roles": [
+      "participant: Access to course materials, RAG chatbot, simulation environments",
+      "mentor: All participant privileges + code review access, team progress monitoring",
+      "admin: All mentor privileges + hardware lab management, API quota monitoring, user account management"
+    ],
+    "data_storage": [
+      "User credentials: encrypted database (PostgreSQL recommended) with field-level encryption for sensitive data",
+      "Session tokens: Redis cache for fast lookup and automatic expiration",
+      "OAuth tokens: encrypted vault storage (never logged or committed to version control)",
+      "Audit logs: all authentication events (login, logout, failed attempts) logged with timestamps and IP addresses"
+    ],
+    "integration_requirements": [
+      "Backend API endpoints: /auth/signup, /auth/login, /auth/logout, /auth/refresh-token",
+      "Frontend integration: JWT storage in httpOnly cookies (not localStorage to prevent XSS attacks)",
+      "Database migrations for user schema with proper indexing on email/username",
+      "Email verification workflow for new signups (optional but recommended)"
+    ],
+    "validation_criteria": [
+      "Authentication flow completes in <2 seconds for valid credentials",
+      "Failed login attempts trigger rate limiting without exposing user enumeration",
+      "JWT tokens validated on every API request with <50ms overhead",
+      "OAuth integration supports GitHub and Google providers with seamless UX"
+    ]
+  },
+
+  "backend_responsibilities": {
+    "title": "Backend Architecture & API Design",
+    "purpose": "Define backend services for RAG chatbot, authentication, hardware lab management, and telemetry collection from deployed robots.",
+    "technical_stack": [
+      "Language: Python 3.11+ (FastAPI framework recommended for async I/O)",
+      "Database: PostgreSQL 15+ for relational data (users, sessions, lab reservations)",
+      "Vector Database: Qdrant for RAG embeddings and semantic search",
+      "Cache: Redis for session tokens, rate limiting, temporary data",
+      "Message Queue: RabbitMQ or Redis Streams for async task processing (diagram generation, email sending)"
+    ],
+    "api_design_rules": [
+      "RESTful endpoints with OpenAPI 3.0 documentation (auto-generated via FastAPI)",
+      "Versioned APIs: /api/v1/ prefix to enable backward compatibility",
+      "Error responses must use standardized format: {\"error\": \"error_code\", \"message\": \"human-readable description\", \"details\": {}}",
+      "All endpoints must implement request validation using Pydantic models",
+      "Rate limiting: 100 requests/minute per user for standard endpoints, 10 requests/minute for compute-intensive tasks (RAG queries, diagram generation)",
+      "CORS configuration: restrict to known frontend origins (no wildcard * in production)"
+    ],
+    "key_endpoints": [
+      "/api/v1/chat/query: RAG chatbot queries (POST with message, returns answer + sources)",
+      "/api/v1/auth/signup, /api/v1/auth/login, /api/v1/auth/logout: User authentication",
+      "/api/v1/diagrams/generate: Gemini diagram generation (POST with textual description)",
+      "/api/v1/hardware/reserve: Lab equipment reservation (POST with time slot, robot type)",
+      "/api/v1/telemetry/upload: Robot telemetry data ingestion (POST with ROS 2 bag metadata)"
+    ],
+    "security_requirements": [
+      "Input sanitization for all user-provided data (prevent SQL injection, XSS)",
+      "API key rotation: all external API keys (Claude, Gemini, Qdrant) must be rotatable without code changes",
+      "Secrets management: use environment variables from .env (never hardcode)",
+      "Audit logging: log all API requests with user ID, endpoint, timestamp, response status"
+    ],
+    "validation_criteria": [
+      "API response time: p95 latency <500ms for standard endpoints, <3s for RAG queries",
+      "Error handling: 100% of endpoints return proper HTTP status codes and error messages",
+      "OpenAPI documentation completeness: all endpoints documented with examples",
+      "Load testing: backend handles 100 concurrent users without degradation"
+    ]
+  },
+
+  "frontend_responsibilities": {
+    "title": "Frontend Architecture & User Experience",
+    "purpose": "Provide intuitive web interface for course navigation, RAG chatbot, hardware lab booking, and real-time robot telemetry monitoring.",
+    "technical_stack": [
+      "Framework: React 18+ with TypeScript for type safety",
+      "Styling: Tailwind CSS for rapid UI development, consistent with Docusaurus theme",
+      "State Management: React Context API for global state (user auth, chatbot history)",
+      "Routing: React Router for multi-page navigation",
+      "Real-time Communication: WebSockets for live chatbot responses, robot telemetry streaming"
+    ],
+    "ui_design_rules": [
+      "Responsive design: mobile-first approach, works on tablets and desktops",
+      "Accessibility: WCAG 2.1 AA compliance (keyboard navigation, screen reader support, color contrast)",
+      "Loading states: display skeletons or spinners for async operations (API calls, diagram generation)",
+      "Error feedback: user-friendly error messages with actionable suggestions (e.g., 'Login failed. Check your password or reset it here.')",
+      "Dark mode support: respect user's system preference, manual toggle available"
+    ],
+    "key_pages": [
+      "/dashboard: User progress tracking, active tasks, upcoming hardware lab reservations",
+      "/chat: RAG chatbot interface with message history, source citations, code syntax highlighting",
+      "/modules: Course content navigation (Module 1-4), progress indicators, quizzes",
+      "/diagrams: Gemini-generated diagrams gallery with search and filtering",
+      "/hardware: Lab equipment booking calendar, availability status, usage guidelines"
+    ],
+    "integration_requirements": [
+      "Authentication: JWT tokens stored in httpOnly cookies, automatic refresh on expiration",
+      "API client: Axios or Fetch with interceptors for error handling and token refresh",
+      "Markdown rendering: react-markdown for course content display with syntax highlighting (Prism.js)",
+      "Diagram rendering: SVG display with zoom/pan for large architecture diagrams"
+    ],
+    "validation_criteria": [
+      "Page load time: First Contentful Paint <1.5s on 3G connection",
+      "Accessibility audit: Lighthouse score >90 for accessibility category",
+      "Cross-browser compatibility: tested on Chrome, Firefox, Safari, Edge (latest versions)",
+      "Mobile responsiveness: all features usable on screens down to 320px width"
+    ]
+  },
+
+  "api_key_management_security": {
+    "title": "API Key Usage & Security Best Practices",
+    "purpose": "Ensure all external API integrations (Claude, Qdrant, Cohere, Gemini, OpenAI) follow secure credential management to prevent unauthorized access and quota abuse.",
+    "security_rules": [
+      "Environment Variables: All API keys must be stored in .env file (never committed to git)",
+      "Git Ignore: .env, .env.local, .env.production must be in .gitignore to prevent accidental commits",
+      "Key Rotation: API keys must be rotatable without code changes (read from environment, not hardcoded)",
+      "Least Privilege: API keys must have minimum required scopes (e.g., read-only for retrieval, write for generation)",
+      "Monitoring: API usage must be logged (requests/day, quota consumption) with alerts for abnormal patterns",
+      "Fallback Handling: Applications must gracefully handle API key expiration or rate limit errors"
+    ],
+    "api_key_inventory": {
+      "CLAUDE_API_KEY": {
+        "purpose": "RAG chatbot generation, code assistance, subagent orchestration",
+        "provider": "Anthropic",
+        "quota_limits": "Monitor token usage, implement caching for repeated queries",
+        "fallback": "Use GPT-4 via OPENAI_API_KEY if Claude quota exhausted"
+      },
+      "QDRANT_API_KEY": {
+        "purpose": "Vector database for RAG embeddings storage and retrieval",
+        "provider": "Qdrant Cloud",
+        "quota_limits": "Monitor storage usage, archive old embeddings if quota approached",
+        "fallback": "Local Qdrant instance (requires Docker setup)"
+      },
+      "COHERE_API_KEY": {
+        "purpose": "Text embeddings for RAG pipeline (multilingual support)",
+        "provider": "Cohere",
+        "quota_limits": "Batch embedding requests to reduce API calls",
+        "fallback": "Use OpenAI embeddings (text-embedding-ada-002)"
+      },
+      "GEMINI_API_KEY": {
+        "purpose": "Diagram generation from textual descriptions",
+        "provider": "Google AI",
+        "quota_limits": "Cache generated diagrams, regenerate only on content changes",
+        "fallback": "Manual diagram creation using draw.io or Mermaid syntax"
+      },
+      "OPENAI_API_KEY": {
+        "purpose": "Whisper voice transcription, GPT-4 fallback for chatbot",
+        "provider": "OpenAI",
+        "quota_limits": "Use Whisper small model on edge devices to reduce API dependency",
+        "fallback": "Local Whisper deployment on GPU workstation"
+      }
+    },
+    "deployment_practices": [
+      "Production: Use secret management services (AWS Secrets Manager, HashiCorp Vault) instead of .env files",
+      "Development: .env.local for developer-specific keys (not shared in team)",
+      "CI/CD: Store API keys as encrypted environment variables in GitHub Actions secrets",
+      "Logging: Never log API keys or tokens (scrub sensitive data from logs)"
+    ],
+    "validation_criteria": [
+      "No API keys present in git history (audit with git log -S 'sk-' --all)",
+      "All external API calls include error handling for 401 (unauthorized) and 429 (rate limit)",
+      "Monitoring dashboard tracks API usage and costs with weekly reports",
+      "Key rotation procedure documented and tested quarterly"
+    ]
+  },
+
+  "hardware_infrastructure": {
+    "title": "Hardware & Cloud Setup Requirements",
+    "purpose": "Define physical and cloud infrastructure needed to support hackathon development, simulation, and deployment across diverse robot platforms.",
+    "digital_twin_workstation": {
+      "purpose": "High-performance development machine for Isaac Sim, Gazebo, Unity simulations",
+      "specifications": [
+        "GPU: NVIDIA RTX 3060 or higher (minimum 12GB VRAM for Isaac Sim ray tracing)",
+        "CPU: Intel i7/AMD Ryzen 7 or higher (8+ cores for parallel simulation)",
+        "RAM: 32GB minimum (64GB recommended for large-scale simulations)",
+        "Storage: 500GB NVMe SSD (fast I/O for simulation datasets)",
+        "OS: Ubuntu 22.04 LTS with ROS 2 Humble pre-installed"
+      ],
+      "software_stack": [
+        "NVIDIA drivers 525+ with CUDA 12.0",
+        "Docker for containerized simulation environments",
+        "Gazebo Fortress, Unity 2022.3 LTS, Isaac Sim 2023.1.0",
+        "ROS 2 Humble with navigation, manipulation, perception packages"
+      ]
+    },
+    "edge_ai_kits": {
+      "purpose": "Deploy trained models and control algorithms on physical robots with power and compute constraints",
+      "jetson_orin_nano": {
+        "specifications": "8GB RAM, 1024-core GPU, 6-core ARM CPU, 10-15W power",
+        "use_cases": ["Onboard perception (object detection, VSLAM)", "Local Whisper transcription", "Real-time control loops"],
+        "software": ["JetPack 5.1+", "TensorRT for model optimization", "ROS 2 Humble ARM builds"]
+      },
+      "realsense_d435i": {
+        "specifications": "Depth camera with IMU, 1280x720@30fps, 0.3-3m range",
+        "use_cases": ["RGB-D perception for manipulation", "Visual odometry for navigation", "3D mapping"],
+        "integration": "ROS 2 realsense-ros package for direct topic publishing"
+      },
+      "usb_microphone_array": {
+        "specifications": "4-mic array, 16kHz sampling, beamforming for noise reduction",
+        "use_cases": ["Voice command input for VLA pipeline", "Speaker localization"],
+        "integration": "ALSA drivers for Linux, pyaudio for Python audio capture"
+      }
+    },
+    "robot_lab_tiers": {
+      "proxy_robot_lab": {
+        "description": "Remote access to shared humanoid platform via cloud streaming",
+        "advantages": ["No hardware purchase required", "Suitable for distributed teams", "Professional-grade platform"],
+        "limitations": ["Network latency (100-300ms)", "Shared access (booking required)", "Limited customization"],
+        "access_method": "SSH tunnel + VNC for visualization, ROS 2 bridge for command interface"
+      },
+      "miniature_humanoid_kit": {
+        "description": "Desktop-scale humanoid robot (e.g., TurtleBot-based bipedal kit)",
+        "advantages": ["Affordable ($500-1500)", "Desktop workspace sufficient", "Good for learning"],
+        "limitations": ["Limited manipulation (simple grippers only)", "Lower payload capacity", "Simplified kinematics"],
+        "recommended_for": "Educational focus, algorithm prototyping, indoor navigation"
+      },
+      "premium_bipedal_platform": {
+        "description": "Full-scale humanoid robot (e.g., Unitree H1, AgileX Scout-inspired bipedal)",
+        "advantages": ["Research-grade hardware", "Full manipulation and locomotion", "Realistic deployment scenarios"],
+        "limitations": ["High cost ($10k-50k+)", "Requires dedicated lab space", "Safety protocols mandatory"],
+        "recommended_for": "Advanced capstone projects, research publications, industry collaborations"
+      }
+    },
+    "cloud_resources": {
+      "purpose": "Scale compute for training, large-scale simulation, data processing",
+      "recommended_services": [
+        "AWS EC2 G4dn instances: GPU compute for model training (PyTorch, TensorFlow)",
+        "Google Cloud TPU: Accelerated training for large vision-language models",
+        "Azure Kinect integration: Cloud-based 3D reconstruction pipelines"
+      ],
+      "cost_management": [
+        "Use spot instances for non-critical training jobs (60-90% cost savings)",
+        "Set billing alerts at $50, $100, $200 thresholds",
+        "Auto-shutdown policies for idle instances (>1 hour no activity)"
+      ]
+    }
+  },
+
+  "governance_and_compliance": {
+    "title": "Constitution Governance & Compliance Verification",
+    "purpose": "Ensure hackathon constitution remains aligned with academic constitution, updated with project evolution, and enforced through automated checks.",
+    "amendment_process": {
+      "proposal": "Any participant or mentor can propose constitution changes via GitHub issue or discussion",
+      "review": "Architectural changes require ADR creation via /sp.adr command",
+      "approval": "Consensus from core team (minimum 2 mentors) required for major changes",
+      "versioning": "Follow semantic versioning (MAJOR.MINOR.PATCH) as defined in academic constitution"
+    },
+    "compliance_checks": {
+      "pre_commit_hooks": [
+        "Scan for hardcoded API keys (regex search for sk-, api_key=)",
+        "Validate JSON/YAML syntax for configuration files",
+        "Check that all .env files are in .gitignore"
+      ],
+      "ci_cd_validations": [
+        "Run security audit (npm audit, pip-audit) on dependencies",
+        "Verify all Docusaurus pages build without errors",
+        "Check accessibility compliance (axe-core tests on frontend)",
+        "Validate API OpenAPI schema matches implementation"
+      ],
+      "periodic_reviews": [
+        "Weekly: Review API usage logs for anomalies",
+        "Monthly: Audit user access logs for unauthorized attempts",
+        "Per-module: Constitution alignment check before module release"
+      ]
+    },
+    "alignment_with_academic_constitution": {
+      "shared_principles": [
+        "Spec-Driven Development: Hackathon projects must define specs before implementation",
+        "Zero-Plagiarism: All code and documentation must cite sources (libraries, tutorials, papers)",
+        "AI-Driven Workflow: Use Claude Code with SpecKit Plus for task decomposition",
+        "Documentation-as-Code: Docusaurus for all documentation, markdown for version control"
+      ],
+      "hackathon_specific_additions": [
+        "Hardware safety protocols (not applicable to book-only constitution)",
+        "Real-time system constraints (latency, resource limits on edge devices)",
+        "Multi-tier hardware support (proxy, miniature, premium robot labs)",
+        "Team collaboration rules (shared access to robot hardware, git workflows)"
+      ]
+    },
+    "violation_handling": {
+      "severity_levels": {
+        "critical": "Hardcoded API keys, unsafe hardware commands, data breaches → immediate revocation of access",
+        "high": "Missing safety checks, unauthenticated API endpoints → fix required within 24 hours",
+        "medium": "Missing documentation, slow API responses → fix required within 1 week",
+        "low": "Code style violations, minor accessibility issues → address in next sprint"
+      },
+      "escalation_path": "Participant → Mentor → Admin → Project Lead"
+    }
+  },
+
+  "quick_reference": {
+    "title": "Hackathon Quick Reference Guide",
+    "getting_started_checklist": [
+      "1. Clone repository and run `npm install` in robotic/ directory",
+      "2. Create .env file with API keys (see .env.example template)",
+      "3. Activate Python venv: `source venv/bin/activate`",
+      "4. Install specifyplus: `pip install specifyplus`",
+      "5. Start Docusaurus dev server: `npm start` (accessible at http://localhost:3000)",
+      "6. Test RAG chatbot: POST to /api/v1/chat/query with test message",
+      "7. Reserve hardware lab slot if planning physical robot deployment"
+    ],
+    "common_commands": {
+      "ros2": [
+        "ros2 node list: Show all active ROS 2 nodes",
+        "ros2 topic echo /topic_name: Monitor topic data",
+        "ros2 launch pkg_name launch_file.py: Start launch file",
+        "colcon build --symlink-install: Build ROS 2 workspace"
+      ],
+      "simulation": [
+        "gazebo worlds/test_environment.world: Launch Gazebo simulation",
+        "ros2 launch isaac_sim demo.launch.py: Start Isaac Sim scenario",
+        "unity-simulator --scene Warehouse: Launch Unity simulation"
+      ],
+      "specifyplus": [
+        "/sp.specify: Create feature specification",
+        "/sp.plan: Generate implementation plan",
+        "/sp.tasks: Generate task breakdown",
+        "/sp.implement: Execute tasks with AI assistance"
+      ]
+    },
+    "troubleshooting_faq": [
+      "Q: Gazebo crashes on startup → Check GPU drivers (nvidia-smi), ensure RTX GPU detected",
+      "Q: ROS 2 nodes can't communicate → Verify ROS_DOMAIN_ID matches across machines, check firewall",
+      "Q: Whisper transcription is slow → Use smaller model (tiny, base) or deploy to Jetson with TensorRT",
+      "Q: RAG chatbot returns irrelevant answers → Check Qdrant collection has embeddings, verify retrieval limit",
+      "Q: Hardware robot not responding → Check ROS 2 bridge connection, verify joint controller status"
+    ],
+    "resource_links": [
+      "ROS 2 Documentation: https://docs.ros.org/en/humble/",
+      "NVIDIA Isaac Sim: https://developer.nvidia.com/isaac-sim",
+      "Gazebo Tutorials: https://gazebosim.org/docs",
+      "Docusaurus Docs: https://docusaurus.io/docs",
+      "SpecKit Plus Guide: See .specify/templates/ directory"
+    ]
+  }
+}

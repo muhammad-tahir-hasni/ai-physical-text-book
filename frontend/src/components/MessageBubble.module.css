@@ -1,0 +1,129 @@
+/**
+ * Styles for MessageBubble component
+ */
+
+.messageContainer {
+  display: flex;
+  margin-bottom: 1rem;
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.userMessage {
+  justify-content: flex-end;
+}
+
+.assistantMessage {
+  justify-content: flex-start;
+}
+
+.messageBubble {
+  max-width: 80%;
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  word-wrap: break-word;
+}
+
+.userMessage .messageBubble {
+  background: var(--ifm-color-primary);
+  color: white;
+  border-bottom-right-radius: 4px;
+}
+
+.assistantMessage .messageBubble {
+  background: var(--ifm-background-surface-color);
+  color: var(--ifm-font-color-base);
+  border-bottom-left-radius: 4px;
+  border: 1px solid var(--ifm-color-emphasis-300);
+}
+
+[data-theme='dark'] .assistantMessage .messageBubble {
+  background: rgba(118, 185, 0, 0.1);
+  border-color: rgba(118, 185, 0, 0.3);
+}
+
+.messageContent {
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+
+.sources {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  font-size: 0.875rem;
+}
+
+.userMessage .sources {
+  border-top-color: rgba(255, 255, 255, 0.3);
+}
+
+.assistantMessage .sources {
+  border-top-color: var(--ifm-color-emphasis-300);
+}
+
+.sourcesLabel {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  opacity: 0.9;
+}
+
+.source {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
+  padding: 0.25rem 0;
+}
+
+.sourceIcon {
+  font-size: 0.875rem;
+}
+
+.sourceTitle {
+  flex: 1;
+  font-weight: 500;
+  opacity: 0.9;
+}
+
+.sourceScore {
+  font-size: 0.75rem;
+  opacity: 0.7;
+}
+
+.timestamp {
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+  opacity: 0.7;
+  text-align: right;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .messageBubble {
+    max-width: 90%;
+  }
+
+  .sources {
+    font-size: 0.8rem;
+  }
+
+  .source {
+    flex-wrap: wrap;
+  }
+
+  .sourceScore {
+    width: 100%;
+    margin-left: 1.5rem;
+  }
+}

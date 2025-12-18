@@ -1,0 +1,30 @@
+{
+  "version": 2,
+  "name": "physical-ai-textbook",
+  "builds": [
+    {
+      "src": "frontend/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "build"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/frontend/$1"
+    }
+  ],
+  "buildCommand": "cd frontend && npm install && npm run build",
+  "outputDirectory": "frontend/build",
+  "framework": "docusaurus",
+  "public": false,
+  "regions": ["iad1"],
+  "env": {
+    "REACT_APP_API_URL": "https://your-backend-url.onrender.com",
+    "REACT_APP_ENABLE_AUTH": "true",
+    "REACT_APP_ENABLE_CHAT": "true",
+    "REACT_APP_ENABLE_PERSONALIZATION": "true"
+  }
+}

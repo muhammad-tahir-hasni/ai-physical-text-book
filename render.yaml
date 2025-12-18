@@ -1,0 +1,55 @@
+# Render.com deployment configuration
+# Free tier alternative to Railway for backend deployment
+
+services:
+  # Backend API Service
+  - type: web
+    name: physical-ai-backend
+    env: python
+    region: oregon
+    plan: free
+    branch: main
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: DATABASE_URL
+        fromDatabase:
+          name: physical-ai-db
+          property: connectionString
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: QDRANT_URL
+        sync: false
+      - key: QDRANT_API_KEY
+        sync: false
+      - key: COHERE_API_KEY
+        sync: false
+      - key: CLAUDE_API_KEY
+        sync: false
+      - key: JWT_SECRET_KEY
+        generateValue: true
+      - key: REFRESH_SECRET_KEY
+        generateValue: true
+      - key: CORS_ORIGINS
+        value: https://YOUR-USERNAME.github.io
+      - key: FRONTEND_URL
+        value: https://YOUR-USERNAME.github.io
+      - key: REDIS_URL
+        fromService:
+          name: physical-ai-redis
+          type: redis
+          property: connectionString
+
+databases:
+  # PostgreSQL Database (Free 90-day trial, then paid)
+  - name: physical-ai-db
+    databaseName: physical_ai
+    plan: free
+
+# Redis instance for caching (Free tier available)
+  - name: physical-ai-redis
+    plan: free
+    maxmemoryPolicy: allkeys-lru

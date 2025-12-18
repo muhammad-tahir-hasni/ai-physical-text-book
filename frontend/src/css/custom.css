@@ -1,0 +1,204 @@
+/**
+ * Physical AI & Humanoid Robotics - Premium Theme
+ * A modern, tech-focused design for robotics education
+ */
+
+/* Light Theme - Robotics Blue */
+:root {
+  /* Primary Colors - Tech Blue */
+  --ifm-color-primary: #0066cc;
+  --ifm-color-primary-dark: #005bb8;
+  --ifm-color-primary-darker: #0056ad;
+  --ifm-color-primary-darkest: #00478f;
+  --ifm-color-primary-light: #1a75d6;
+  --ifm-color-primary-lighter: #2e80db;
+  --ifm-color-primary-lightest: #4d94e5;
+
+  /* Typography */
+  --ifm-font-family-base: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', sans-serif;
+  --ifm-font-family-monospace: 'JetBrains Mono', 'Fira Code', 'Consolas', Monaco, 'Courier New', monospace;
+  --ifm-code-font-size: 92%;
+  --ifm-font-size-base: 16px;
+  --ifm-line-height-base: 1.7;
+
+  /* Spacing & Layout */
+  --ifm-leading-desktop: 1.8;
+  --ifm-global-radius: 8px;
+
+  /* Code Blocks */
+  --docusaurus-highlighted-code-line-bg: rgba(0, 102, 204, 0.1);
+  --ifm-code-border-radius: 6px;
+  --ifm-code-padding-vertical: 0.1rem;
+  --ifm-code-padding-horizontal: 0.3rem;
+
+  /* Background Colors */
+  --ifm-background-color: #ffffff;
+  --ifm-background-surface-color: #f8f9fa;
+
+  /* Sidebar */
+  --ifm-menu-color-background-active: rgba(0, 102, 204, 0.08);
+  --ifm-menu-color-background-hover: rgba(0, 102, 204, 0.05);
+}
+
+/* Dark Theme - NVIDIA Green Accent */
+[data-theme='dark'] {
+  /* Primary Colors - Robotics Green */
+  --ifm-color-primary: #76b900;
+  --ifm-color-primary-dark: #6aa800;
+  --ifm-color-primary-darker: #649e00;
+  --ifm-color-primary-darkest: #528200;
+  --ifm-color-primary-light: #82c400;
+  --ifm-color-primary-lighter: #8bca0a;
+  --ifm-color-primary-lightest: #9dd11f;
+
+  /* Dark Background */
+  --ifm-background-color: #1a1a1a;
+  --ifm-background-surface-color: #242424;
+
+  /* Code Blocks */
+  --docusaurus-highlighted-code-line-bg: rgba(118, 185, 0, 0.15);
+
+  /* Sidebar */
+  --ifm-menu-color-background-active: rgba(118, 185, 0, 0.15);
+  --ifm-menu-color-background-hover: rgba(118, 185, 0, 0.08);
+}
+
+/* Typography Enhancements */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1.5rem;
+}
+
+h2 {
+  font-size: 2rem;
+  margin-top: 3rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--ifm-color-emphasis-200);
+}
+
+h3 {
+  font-size: 1.5rem;
+  margin-top: 2rem;
+}
+
+/* Code Blocks */
+pre {
+  border-radius: var(--ifm-global-radius);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+code {
+  background-color: var(--ifm-code-background);
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+/* Inline Code */
+:not(pre) > code {
+  padding: 0.15rem 0.4rem;
+  font-size: 0.9em;
+  border: 1px solid var(--ifm-color-emphasis-300);
+}
+
+/* Tables */
+table {
+  border-radius: var(--ifm-global-radius);
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+thead tr {
+  background-color: var(--ifm-color-primary);
+  color: white;
+}
+
+thead th {
+  font-weight: 700;
+  padding: 1rem;
+}
+
+tbody td {
+  padding: 0.875rem 1rem;
+}
+
+/* Blockquotes */
+blockquote {
+  border-left: 4px solid var(--ifm-color-primary);
+  background-color: var(--ifm-background-surface-color);
+  padding: 1rem 1.5rem;
+  border-radius: var(--ifm-global-radius);
+  font-style: italic;
+}
+
+/* Links */
+a {
+  text-decoration-thickness: 2px;
+  text-underline-offset: 2px;
+}
+
+a:hover {
+  text-decoration-thickness: 2px;
+}
+
+/* Sidebar Enhancements */
+.menu__link {
+  border-radius: 6px;
+  padding: 0.5rem 0.75rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.menu__link--active {
+  font-weight: 700;
+  border-left: 3px solid var(--ifm-color-primary);
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 996px) {
+  h1 {
+    font-size: 2rem;
+  }
+
+  h2 {
+    font-size: 1.75rem;
+  }
+
+  :root {
+    --ifm-font-size-base: 15px;
+  }
+}
+
+/* Navbar */
+.navbar {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(10px);
+}
+
+/* Footer */
+.footer {
+  background-color: var(--ifm-background-surface-color);
+  border-top: 1px solid var(--ifm-color-emphasis-200);
+}
+
+/* Admonitions (Docusaurus Alerts) */
+.admonition {
+  border-radius: var(--ifm-global-radius);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Smooth Scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Selection */
+::selection {
+  background-color: var(--ifm-color-primary);
+  color: white;
+}
